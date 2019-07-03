@@ -1,12 +1,6 @@
-<div class="container"
-    fxLayout="row"
-    fxLayout.sm="column"
-    fxLayout.xs="column"
-    fxLayoutAlign.gt-md="space-around center"
-    fxLayoutGap="10px"
-    fxLayoutGap.xs="0">
-    <div fxFlex="40" *ngIf="dish">
-        <mat-card>
+<div class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center" fxLayoutGap="10px" fxLayoutGap.xs="0">
+    <div fxFlex="40">
+        <mat-card *ngIf="dish">
             <mat-card-header>
                 <mat-card-title>
                     <h3>{{dish.name | uppercase}}</h3>
@@ -14,7 +8,7 @@
             </mat-card-header>
 
             <img mat-card-image height="300px" src="{{dish.image}}" alt="{{dish.name}}" />
-            
+
             <mat-card-content>
                 <p>{{dish.description}}</p>
             </mat-card-content>
@@ -24,16 +18,15 @@
             </mat-card-actions>
         </mat-card>
     </div>
-    <div fxFlex="40" *ngIf="dish">
-        
-        <mat-list *ngIf="dish" fxFlex>
-            <mat-list-item >
-                <h3 >Comments</h3>
+    <div fxFlex="40">
+        <mat-list *ngIf="dish">
+            <mat-list-item>
+                <h3>Comments</h3>
             </mat-list-item>
             <mat-list-item *ngFor="let c of dish.comments">
                 <h3 matLine>{{c.comment}}</h3>
-                <p matLine >{{c.rating}} stars</p>
-                <p matLine >-- {{c.author}} {{c.date | date: 'MMM d, y'}}</p>
+                <p matLine>{{c.rating}} stars</p>
+                <p matLine>-- {{c.author}} {{c.date | date: 'MMM d, y'}}</p>
             </mat-list-item>
         </mat-list>
     </div>
