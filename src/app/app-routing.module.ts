@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 import { MenuComponent } from './menu/menu.component';
 import { DishdetailComponent } from './dishdetail/dishdetail.component';
@@ -19,7 +21,7 @@ const routes: Routes = [
     path: 'about', component: AboutComponent
   },
   {
-    path: 'contact', component: ContactComponent
+    path: 'contactus', component: ContactComponent
   },
   {
     path: '', redirectTo: '/home', pathMatch: 'full'
@@ -27,7 +29,14 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    RouterModule.forRoot(
+      routes,
+      { enableTracing: true } // <-- debugging purposes only
+      )
+  ],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
