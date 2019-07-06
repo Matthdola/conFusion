@@ -17,15 +17,15 @@ import { switchMap } from 'rxjs/operators';
 })
 export class DishdetailComponent implements OnInit {
   //@Input()
-  commentForm: FormGroup;
-  comment: Comment;
-  @ViewChild('cform', {static: false}) commentFormDirectives: any;
-
   dish: Dish;
+  dishcopy: Dish;
   errMess: string;
   dishIds: string[];
   next: string;
   prev: string;
+  commentForm: FormGroup;
+  comment: Comment;
+  @ViewChild('cform', {static: false}) commentFormDirectives: any;
 
   formErrors = {
     'author': '',
@@ -62,7 +62,7 @@ export class DishdetailComponent implements OnInit {
 
     this.route.params
         .pipe(switchMap((params: Params) => this.dishService.getDish(params['id'])))
-        .subscribe(dish => {this.dish =  dish; this.setPrevNext(dish.id); },
+        .subscribe(dish => {this.dish =  dish; this.dishcopy = dish; this.setPrevNext(dish.id); },
           errmess => this.errMess = errmess as any);
 
     this.commentForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -92,14 +92,12 @@ export class DishdetailComponent implements OnInit {
   }
 
   onSubmit() {
-    const d = new Date();
-    const n = d.toISOString();
     this.comment = this.commentForm.value;
     this.comment.date = new Date().toISOString();
-    this.dish.comments.push(this.comment);
-    console.log(this.comment);
-    localStorage.setItem('comment', JSON.stringify(this.comment));
-
+    this.dishcopy.comments.push(this.comment);
+    this.dishService.putDish(this.dishcopy)
+      .subscribe(dish => { this.dish = dish; this.dishcopy = dish; },
+        errmess => { this.dish = null; this.dishcopy = null; this.errMess = errmess as any; });
     this.commentForm.reset({
       author: '',
       rating: 5,
