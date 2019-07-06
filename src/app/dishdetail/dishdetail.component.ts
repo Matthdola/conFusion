@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject } from '@angular/core';
 import { Params, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -22,6 +22,7 @@ export class DishdetailComponent implements OnInit {
   @ViewChild('cform', {static: false}) commentFormDirectives: any;
 
   dish: Dish;
+  errMess: string;
   dishIds: string[];
   next: string;
   prev: string;
@@ -35,7 +36,7 @@ export class DishdetailComponent implements OnInit {
     author: {
       required: 'The author name of the comment is required',
       minLengh: 'The author name must be at least 2 characters long.',
-      maxLength: 'The author name cannot be more than 25 characters.'
+      maxLength: 'The author name can not be more than 25 characters.'
     },
     comment: {
       required: 'The comment is required.',
@@ -48,7 +49,8 @@ export class DishdetailComponent implements OnInit {
     private dishService: DishService,
     private route: ActivatedRoute,
     private location: Location,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    @Inject('BaseURL') private BaseURL
     ) { this.createForm(); }
 
   ngOnInit() {
@@ -60,7 +62,8 @@ export class DishdetailComponent implements OnInit {
 
     this.route.params
         .pipe(switchMap((params: Params) => this.dishService.getDish(params['id'])))
-        .subscribe(dish => {this.dish =  dish; this.setPrevNext(dish.id); });
+        .subscribe(dish => {this.dish =  dish; this.setPrevNext(dish.id); },
+          errmess => this.errMess = errmess as any);
 
     this.commentForm.valueChanges.subscribe(data => this.onValueChanged(data));
 
