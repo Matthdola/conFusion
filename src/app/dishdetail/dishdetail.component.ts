@@ -1,19 +1,28 @@
 import { Component, OnInit, Input, ViewChild, Inject } from '@angular/core';
 import { Params, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { trigger, state, style, animate, transition } from '@angular/animations';
 import { Location } from '@angular/common';
 
 import { Dish } from '../share/dish';
 import { DishService } from '../services/dish.service';
 import { Comment } from '../share/comment';
 import { switchMap } from 'rxjs/operators';
-
+import { visibility, flyInOut, expand } from '../animations/app.animation';
 
 @Component({
   selector: 'app-dishdetail',
   templateUrl: './dishdetail.component.html',
-  styleUrls: ['./dishdetail.component.scss']
+  styleUrls: ['./dishdetail.component.scss'],
+  host: {
+    '[@flyInOut]': 'true',
+    'style': 'display: block;'
+  },
+  animations: [
+    flyInOut(),
+    visibility(),
+    expand()
+  ]
 })
 export class DishdetailComponent implements OnInit {
   //@Input()
@@ -26,6 +35,7 @@ export class DishdetailComponent implements OnInit {
   commentForm: FormGroup;
   comment: Comment;
   @ViewChild('cform', {static: false}) commentFormDirectives: any;
+  visibility = 'shown';
 
   formErrors = {
     'author': '',
@@ -61,9 +71,20 @@ export class DishdetailComponent implements OnInit {
         .subscribe((dishIds) => this.dishIds = dishIds);
 
     this.route.params
-        .pipe(switchMap((params: Params) => this.dishService.getDish(params['id'])))
-        .subscribe(dish => {this.dish =  dish; this.dishcopy = dish; this.setPrevNext(dish.id); },
-          errmess => this.errMess = errmess as any);
+        .pipe(switchMap((params: Params) => {
+          this.visibility = 'hidden';
+          return this.dishService.getDish(params['id']);
+        }))
+        .subscribe(dish => {
+          this.dish =  dish;
+          this.dishcopy = dish;
+          this.setPrevNext(dish.id);
+          this.visibility = 'shown';
+        },
+          errmess => {
+            this.visibility = 'hidden';
+            this.errMess = errmess as any;
+          });
 
     this.commentForm.valueChanges.subscribe(data => this.onValueChanged(data));
 

@@ -5,10 +5,10 @@ import { Dish } from '../share/dish';
 /*import { resolve } from 'dns'; */
 import { Observable, of, pipe } from 'rxjs';
 import { delay } from 'rxjs/operators';
+
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { baseURL} from '../share/baseurl';
 import { map, catchError } from 'rxjs/operators';
-
 import { ProcessHTTPMsgService } from './process-httpmsg.service';
 
 @Injectable({
@@ -81,8 +81,19 @@ export class DishService {
         'Content-Type': 'application/json'
       })
     };
-    
+
     return this.http.put<Dish>(baseURL + 'dishes/' + dish.id, dish, httpOptions)
+      .pipe(catchError(this.processHTTPMsgService.handleError));
+  }
+
+  postDish(dish: Dish): Observable<Dish> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.post<Dish>(baseURL + 'dishes/', dish, httpOptions)
       .pipe(catchError(this.processHTTPMsgService.handleError));
   }
 }

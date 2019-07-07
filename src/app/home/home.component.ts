@@ -6,17 +6,25 @@ import { Leader } from '../share/leader';
 import { DishService } from '../services/dish.service';
 import { LeaderService } from '../services/leader.service';
 import { PromotionService } from '../services/promotion.service';
-
+import { flyInOut, expand } from '../animations/app.animation';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  host: {
+    '[@flyInOut]': 'true',
+    'style': 'display: block;'
+  },
+  animations: [
+    flyInOut(),
+    expand()
+  ]
 })
 export class HomeComponent implements OnInit {
   dish: Dish;
   dishErrMess: string;
-  promotionErrMess: string;
+  promoErrMess: string;
   leaderErrMess: string;
   promotion: Promotion;
   leader: Leader;
@@ -35,10 +43,13 @@ export class HomeComponent implements OnInit {
 
     //this.promotion = this.promotionService.getFeaturedDish();
     this.promotionService.getFeaturedDish()
-    .subscribe((promotion) => this.promotion = promotion );
+    .subscribe((promotion) => this.promotion = promotion,
+      errmess => this.promoErrMess = errmess as any);
+
     //this.leader = this.leaderService.getFeaturedLeader();
     this.leaderService.getFeaturedLeader()
-    .subscribe((leader) => this.leader = leader);
+    .subscribe((leader) => this.leader = leader,
+      errmess => this.leaderErrMess = errmess as any);
   }
 
 }
